@@ -9,7 +9,7 @@ app.get("/", cors(), (req, res, next) => {
     slackUsername: "feeleep",
     backend: true,
     age: 25,
-    bio: "I am a backend developer. I live in Lagos, Nigeria. I am 25 years old",
+    bio: "I am a backend developer. I live in Lagos, Nigeria. I enjoy talking sports, politics, and economy. Gaming, reading, & writing are also my hobbies. I hope to connect with great minds here.",
   });
   next();
 });
