@@ -17,46 +17,76 @@ app.get("/", cors(), (req, res, next) => {
   next();
 });
 
-app.post(
-  "/",
-  body("x").isInt(),
-  body("y").isInt(),
-  (req, res) => {
-    const x = req.body.x;
-    const y = req.body.y;
-    const operator = req.body.operation_type;
-    const operatorEnum = ["addition", "subtraction", "multiplication"];
-    let result;
-    let index;
+app.post("/", body("x").isInt(), body("y").isInt(), (req, res) => {
+  const x = req.body.x;
+  const y = req.body.y;
+  let operator = req.body.operation_type;
+  const operatorEnum = ["addition", "subtraction", "multiplication"];
+  let result = 0;
+  let index;
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    // if (operatorEnum.includes(operator)) {
-    if (operator === "addition") {
-      index = 0;
-      result = x + y;
-    } else if (operator === "subtraction") {
-      index = 1;
-      result = x - y;
-    } else if (operator === "multiplication") {
-      result = x * y;
-      index = 2;
-    } else {
-      let add = ["addition", "add", "+"];
-      let subtract = ["subtract", "-"];
-      let multiply = ["multiplication", "multiply", "*"];
-    }
-    return res.status(200).json({
-      slackUsername: "feeleep",
-      operation_type: operatorEnum[index],
-      result,
-    });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-  //  }
-);
+
+  // if (operatorEnum.includes(operator)) {
+  if (operator === "addition") {
+    index = 0;
+    result = x + y;
+  } else if (operator === "subtraction") {
+    index = 1;
+    result = x - y;
+  } else if (operator === "multiplication") {
+    result = x * y;
+    index = 2;
+  } else {
+    let add = ["addition", "add", "+"];
+    let subtract = ["subtract", "-"];
+    let multiply = ["multiplication", "multiply", "multiple"];
+    let operands = operator.split(" ");
+    let data = [];
+    operands.forEach((element) => {
+      if (add.includes(element.toLowerCase())) {
+        operator = "addition";
+        console.log(operator);
+      } else if (subtract.includes(element.toLowerCase())) {
+        operator = "subtraction";
+      } else if (multiply.includes(element.toLowerCase())) {
+        operator = "multiplication";
+      }
+      if (!isNaN(element)) {
+        data.push(parseInt(element));
+      }
+    });
+    if (!data.isEmpty) {
+      console.log(data);
+      for (let i = 0; i <= data.length; i++) {
+        if (i == 0) {
+          result = data[i];
+          console.log(result);
+        } else {
+          if (operator == "addition") {
+            index = 0;
+            result += data[i];
+            console.log(result);
+          } else if (operator == "subtraction") {
+            index = 1;
+            result -= data[i];
+          } else if (operator == "multiplication") {
+            result *= data[i];
+            index = 2;
+          }
+        }
+      }
+      return res.status(200).json({
+        slackUsername: "feeleep",
+        operation_type: operator,
+        result,
+      });
+    }
+  }
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
