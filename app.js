@@ -1,10 +1,12 @@
 const fs = require("fs");
 const express = require("express");
-const { body, validateResult } = require("express-validator");
+const bodyParser = require("body-parser");
+const { body, validationResult } = require("express-validator");
+
 const cors = require("cors");
 
 const app = express();
-
+app.use(express.json());
 app.get("/", cors(), (req, res, next) => {
   res.status(200).json({
     slackUsername: "feeleep",
@@ -23,7 +25,7 @@ app.post("/", body("x").isInt(), body("y").isInt(), (req, res) => {
   let result;
   let index;
 
-  const errors = validateResult(req);
+  const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
