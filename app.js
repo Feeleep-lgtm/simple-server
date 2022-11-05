@@ -17,45 +17,51 @@ app.get("/", cors(), (req, res, next) => {
   next();
 });
 
-app.post("/", body("x").isInt(), body("y").isInt(), (req, res) => {
-  const x = req.body.x;
-  const y = req.body.y;
-  const operator = req.body.operation_type;
-  const operatorEnum = ["addition", "subtraction", "multiplication"];
-  let result;
-  let index;
+app.post(
+  "/",
+  body("x").isInt(),
+  body("y").isInt(),
+  body("operation_type"),
+  (req, res) => {
+    const x = req.body.x;
+    const y = req.body.y;
+    const operator = req.body.operation_type;
+    const operatorEnum = ["addition", "subtraction", "multiplication"];
+    let result;
+    let index;
 
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  if (operatorEnum.includes(operator)) {
-    if (operator === "addition") {
-      index = 0;
-      result = x + y;
-    } else if (operator === "subtraction") {
-      index = 1;
-      result = x - y;
-    } else if (operator === "multiplication") {
-      result = x * y;
-      index = 3;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
-    return res.status(200).json({
-      status: "success",
-      data: {
-        slackUsername: "feeleep",
-        operation_type: operatorEnum[index],
-        result,
-      },
-    });
-  } else {
-    return res.status(400).json({
-      status: "fail",
-      message: "Insert a valid Operator",
-    });
+
+    if (operatorEnum.includes(operator)) {
+      if (operator === "addition") {
+        index = 0;
+        result = x + y;
+      } else if (operator === "subtraction") {
+        index = 1;
+        result = x - y;
+      } else if (operator === "multiplication") {
+        result = x * y;
+        index = 2;
+        return res.status(200).json({
+          status: "success",
+          data: {
+            slackUsername: "feeleep",
+            operation_type: operatorEnum[index],
+            result,
+          },
+        });
+      } else {
+        return res.status(400).json({
+          status: "fail",
+          message: "Insert a valid Operator",
+        });
+      }
+    }
   }
-});
+);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
