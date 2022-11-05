@@ -41,9 +41,9 @@ app.post("/", body("x").isInt(), body("y").isInt(), (req, res) => {
     result = x * y;
     index = 2;
   } else {
-    let add = ["addition", "add", "+"];
-    let subtract = ["subtract", "-"];
-    let multiply = ["multiplication", "multiply", "multiple"];
+    let add = ["addition", "add", "plus"];
+    let subtract = ["subtract", "minus"];
+    let multiply = ["multiplication", "multiply", "multiple", "times"];
     let operands = operator.split(" ");
     let data = [];
     operands.forEach((element) => {
@@ -59,33 +59,48 @@ app.post("/", body("x").isInt(), body("y").isInt(), (req, res) => {
         data.push(parseInt(element));
       }
     });
-    if (!data.isEmpty) {
+    if (data.length > 0) {
       console.log(data);
-      for (let i = 0; i <= data.length; i++) {
+      console.log(result);
+      for (let i = 0; i < data.length; i++) {
         if (i == 0) {
-          result = data[i];
+          result = parseInt(data[i]);
           console.log(result);
+          console.log();
         } else {
           if (operator == "addition") {
             index = 0;
-            result += data[i];
+            result += parseInt(data[i]);
+            console.log(data[i]);
             console.log(result);
           } else if (operator == "subtraction") {
             index = 1;
-            result -= data[i];
+            result -= parseInt(data[i]);
           } else if (operator == "multiplication") {
-            result *= data[i];
+            result *= parseInt(data[i]);
             index = 2;
           }
         }
       }
-      return res.status(200).json({
-        slackUsername: "feeleep",
-        operation_type: operator,
-        result,
-      });
+    } else {
+      console.log("hi");
+      if (operator == "addition") {
+        index = 0;
+        result = x + y;
+      } else if (operator == "subtraction") {
+        index = 1;
+        result = x - y;
+      } else if (operator == "multiplication") {
+        result = x * y;
+        index = 2;
+      }
     }
   }
+  return res.status(200).json({
+    slackUsername: "feeleep",
+    operation_type: operator,
+    result,
+  });
 });
 
 const port = process.env.PORT || 3000;
