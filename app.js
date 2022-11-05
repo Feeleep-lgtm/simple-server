@@ -21,7 +21,6 @@ app.post(
   "/",
   body("x").isInt(),
   body("y").isInt(),
-  body("operation_type"),
   (req, res) => {
     const x = req.body.x;
     const y = req.body.y;
@@ -35,32 +34,28 @@ app.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    if (operatorEnum.includes(operator)) {
-      if (operator === "addition") {
-        index = 0;
-        result = x + y;
-      } else if (operator === "subtraction") {
-        index = 1;
-        result = x - y;
-      } else if (operator === "multiplication") {
-        result = x * y;
-        index = 2;
-        return res.status(200).json({
-          status: "success",
-          data: {
-            slackUsername: "feeleep",
-            operation_type: operatorEnum[index],
-            result,
-          },
-        });
-      } else {
-        return res.status(400).json({
-          status: "fail",
-          message: "Insert a valid Operator",
-        });
-      }
+    // if (operatorEnum.includes(operator)) {
+    if (operator === "addition") {
+      index = 0;
+      result = x + y;
+    } else if (operator === "subtraction") {
+      index = 1;
+      result = x - y;
+    } else if (operator === "multiplication") {
+      result = x * y;
+      index = 2;
+    } else {
+      let add = ["addition", "add", "+"];
+      let subtract = ["subtract", "-"];
+      let multiply = ["multiplication", "multiply", "*"];
     }
+    return res.status(200).json({
+      slackUsername: "feeleep",
+      operation_type: operatorEnum[index],
+      result,
+    });
   }
+  //  }
 );
 
 const port = process.env.PORT || 3000;
